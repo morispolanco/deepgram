@@ -1,2 +1,3 @@
-streamlit
-deepgram
+deepgram==1.0.0
+streamlit==1.7.0
+
