@@ -1,2 +1,3 @@
 streamlit
-deepgram
+pydub
+whisper
