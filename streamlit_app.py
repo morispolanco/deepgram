@@ -1,31 +1,29 @@
-import whisper
-from pydub import AudioSegment
+import speech_recognition as sr
 
 def transcribe_audio(audio_file):
-    # Cargar el modelo Whisper
-    model = whisper.load_model("base")
-    
+    recognizer = sr.Recognizer()
+
+    # Leer el archivo de audio
+    with sr.AudioFile(audio_file) as source:
+        audio_data = recognizer.record(source)
+
+    # Utilizar Google Web Speech API para transcribir el audio
     try:
-        # Transcribir el archivo de audio
-        result = model.transcribe(audio_file)
-        transcription = result["text"]
-        return transcription
-    except Exception as e:
-        print("Error al transcribir el audio:", str(e))
+        text = recognizer.recognize_google(audio_data, language="es-ES")
+        return text
+    except sr.UnknownValueError:
+        print("No se pudo entender el audio")
+        return None
+    except sr.RequestError as e:
+        print("Error en la solicitud a la API; {0}".format(e))
         return None
 
 def main():
     # Nombre del archivo de audio
-    audio_file = "audio.m4a"
-    
-    # Cargar el archivo de audio usando pydub
-    sound = AudioSegment.from_file(audio_file)
-    # Convertir a formato wav, ya que Whisper puede manejar wav
-    wav_audio_file = "audio.wav"
-    sound.export(wav_audio_file, format="wav")
+    audio_file = "audio.m4a"  # Ajusta el nombre de tu archivo de audio aquí
     
     # Transcribir el archivo de audio
-    transcription = transcribe_audio(wav_audio_file)
+    transcription = transcribe_audio(audio_file)
     
     # Imprimir la transcripción
     if transcription:
